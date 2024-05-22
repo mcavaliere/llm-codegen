@@ -11,11 +11,17 @@ export function docPrompt(componentName: string, fileContent: string) {
 `;
 }
 
-export function generationPrompt(componentName: string) {
-  return `Generate the code for an ${componentName} component. Output only the code and no other characters.`;
+export function generationPrompt(componentName: string, prompt: string = "") {
+  return `Generate the code for an ${componentName} component with the shadcn-ui library. ${prompt} Output only the code and no other characters. `;
 }
 
-export async function generate(componentName: string) {
+export async function generate({
+  componentName,
+  prompt = "",
+}: {
+  componentName: string;
+  prompt: string;
+}) {
   const filePath = `${process.cwd()}/shadcn-ui-components/${componentName}.mdx`;
   const fileContent = fs.readFileSync(filePath, "utf8");
 
@@ -29,14 +35,11 @@ export async function generate(componentName: string) {
       },
       {
         role: "user",
-        content: generationPrompt(componentName),
+        content: generationPrompt(componentName, prompt),
       },
     ],
     model: "gpt-4o",
   });
 
-  console.log(
-    `---------------- chatCompletion:  `,
-    inspect(chatCompletion, false, null, true /* enable colors */)
-  );
+  return chatCompletion.choices[0].message.content;
 }
