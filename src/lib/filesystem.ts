@@ -1,4 +1,4 @@
-import { PathLike } from "fs";
+import { PathLike, readFileSync } from "fs";
 import { access, mkdir } from "fs/promises";
 import { DOCS_SEARCH_PATH } from "../constants";
 import path from "path";
@@ -27,6 +27,9 @@ export async function ensureDirsExist() {
   await createDirIfNotExists(expandDir(DOCS_SEARCH_PATH));
 }
 
+/**
+ * Get an object whose keys are doc names from the home dir (e.g., shadcn-ui/accordion) and the values are their full paths.
+ */
 export async function loadDocs(): Promise<Record<string, string>> {
   const files = await fg.glob(`${expandDir(DOCS_SEARCH_PATH)}/**/*`);
   return files.reduce((acc, file) => {
@@ -43,4 +46,15 @@ export function docNameFromPath(filePath: string) {
       // Chop off the file extension
       .replace(/(.*)\.(.*?)$/, "$1")
   );
+}
+
+export async function getDocContents(docName: string) {
+  const docMap = await loadDocs();
+  const doc = docMap[docName];
+
+  if (!doc) {
+    throw new Error(`Document ${docName} not found. Run 'lg list' to see available documents.`);
+  }
+
+  return readFileSync(doc, "utf8");
 }

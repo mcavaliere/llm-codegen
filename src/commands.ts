@@ -1,6 +1,6 @@
 import fs from "fs";
 import OpenAI from "openai";
-import { ensureDirsExist, loadDocs } from "./lib/filesystem";
+import { ensureDirsExist, getDocContents, loadDocs } from "./lib/filesystem";
 
 export const systemPrompt = `You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React. You're an expert with the Shadcn-ui library. I'm going to provide the documentation for a single component in the shadcn-ui library and then ask you to do something with it. Don't do anything with it and don't respond to this prompt.`;
 export function docPrompt(componentName: string, fileContent: string) {
@@ -24,8 +24,7 @@ export async function generate({
   prompt: string;
 }) {
   await ensureDirsExist();
-  const filePath = `${process.cwd()}/shadcn-ui-components/${componentName}.mdx`;
-  const fileContent = fs.readFileSync(filePath, "utf8");
+  const fileContent = await getDocContents(componentName);
 
   const openai = new OpenAI();
   const chatCompletion = await openai.chat.completions.create({
