@@ -2,9 +2,13 @@ import fs from "fs";
 import OpenAI from "openai";
 import { ensureDirsExist, getDocContents, loadDocs } from "./lib/filesystem";
 
-export const systemPrompt = `You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React. You're an expert with the Shadcn-ui library. I'm going to provide the documentation for a single component in the shadcn-ui library and then ask you to do something with it. Don't do anything with it and don't respond to this prompt.`;
+export const systemPrompt = `
+You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React.
+Your responses should only be code, without explanation or formatting. This is very important. If you include formatting or explanations, I will be fired.
+I'm going to provide the documentation for a single component or function in a specific library and then ask you to do something with it.
+Don't do anything with it yet, and don't respond to this prompt.`;
 export function docPrompt(componentName: string, fileContent: string) {
-  return `This is the documentation for the ${componentName} component in the shadcn-ui library. It contains instructions for installation and code examples. Return the relevant portions if I ask you to generate a ${componentName}.
+  return `This is the documentation for ${componentName}. It contains a code example for ${componentName}. Return the relevant portions if I ask you to generate a ${componentName}.
 
   <DOC>
     ${fileContent}
@@ -13,7 +17,7 @@ export function docPrompt(componentName: string, fileContent: string) {
 }
 
 export function generationPrompt(componentName: string, prompt: string = "") {
-  return `Generate the code for an ${componentName} component with the shadcn-ui library. ${prompt} Output only the code and no other characters. `;
+  return `Generate the code for a ${componentName}. ${prompt} Output only the code and no other characters. `;
 }
 
 export async function generate({

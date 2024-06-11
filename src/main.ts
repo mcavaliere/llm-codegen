@@ -2,6 +2,9 @@ import { Command } from "commander";
 import "dotenv/config";
 import { generate, generateStream, list } from "./commands";
 
+import ora from "ora";
+import { stripMarkdown } from "./lib/stripMarkdown";
+
 if (!process.env.OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY not found");
 }
@@ -33,12 +36,14 @@ program
         prompt,
       });
     } else {
+      const spinner = ora(`Generating a ${componentName}`).start();
       const output = await generate({
         componentName,
         prompt,
       });
 
-      console.log(output);
+      spinner.stop();
+      if (output) console.log(stripMarkdown(output));
     }
   });
 

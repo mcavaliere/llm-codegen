@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A node CLI tool for generating up-to-date code with AI.",
   "main": "src/main.ts",
+  "type": "module",
   "scripts": {
     "start": "tsx src/main.ts"
   },
@@ -20,6 +21,7 @@
     "enquirer": "^2.4.1",
     "fast-glob": "^3.3.2",
     "openai": "^4.20.0",
+    "ora": "^8.0.1",
     "to-vfile": "^8.0.0",
     "vfile-matter": "^5.0.0"
   }
