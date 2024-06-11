@@ -53,7 +53,8 @@ export async function getDocContents(docName: string) {
   const doc = docMap[docName];
 
   if (!doc) {
-    throw new Error(`Document ${docName} not found. Run 'lg list' to see available documents.`);
+    const err = `Document for ${docName} not found. Run 'lg list' to see available documents.`;
+    throw new Error(err);
   }
 
   return readFileSync(doc, "utf8");
