@@ -10,7 +10,7 @@ const program = new Command();
 
 program
   .name("llm-codegen")
-  .description("LLM code generation for your favorite libraries")
+  .description("LLM-assisted code generation for your favorite libraries")
   .version("0.0.1");
 
 program
