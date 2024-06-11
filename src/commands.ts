@@ -48,5 +48,5 @@ export async function generate({
 
 export async function list() {
   const dirs = await loadDocs();
-  console.log(dirs.join("\n"));
+  console.log(Object.keys(dirs).join("\n"));
 }

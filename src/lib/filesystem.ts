@@ -18,7 +18,6 @@ export function contractDir(dir: string) {
 }
 
 export async function createDirIfNotExists(dir: PathLike) {
-  console.log(`---------------- createDirIfNotExists: ${dir}`);
   return await access(dir)
     .then(() => undefined)
     .catch(() => mkdir(dir));
@@ -28,11 +27,20 @@ export async function ensureDirsExist() {
   await createDirIfNotExists(expandDir(DOCS_SEARCH_PATH));
 }
 
-export async function loadDocs() {
+export async function loadDocs(): Promise<Record<string, string>> {
   const files = await fg.glob(`${expandDir(DOCS_SEARCH_PATH)}/**/*`);
-  return files.map((file) => docNameFromPath(file));
+  return files.reduce((acc, file) => {
+    acc[docNameFromPath(file)] = file;
+    return acc;
+  }, {} as Record<string, string>);
 }
 
 export function docNameFromPath(filePath: string) {
-  return filePath.replace(path.join(expandDir(DOCS_SEARCH_PATH), path.sep), "");
+  return (
+    filePath
+      // Chop off the full path to the docs directory
+      .replace(path.join(expandDir(DOCS_SEARCH_PATH), path.sep), "")
+      // Chop off the file extension
+      .replace(/(.*)\.(.*?)$/, "$1")
+  );
 }
