@@ -8,7 +8,10 @@ if (!process.env.OPENAI_API_KEY) {
 
 const program = new Command();
 
-program.name("shadgen").description("LLM component generation for Shadcn-UI").version("0.0.1");
+program
+  .name("llmcodegen")
+  .description("LLM code generation for your favorite libraries")
+  .version("0.0.1");
 
 program
   .command("gen")
