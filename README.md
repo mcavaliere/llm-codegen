@@ -73,7 +73,7 @@ lg gen shadcn/accordion "with headings for each US state, with content for that 
 ### Examples
 
 ```bash
-pnpm start gen form "a form for capturing patient medical information"
+pnpm start gen shadcn/form "a form for capturing patient medical information"
 ```
 
 ### TODOs
