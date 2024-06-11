@@ -45,6 +45,40 @@ export async function generate({
   return chatCompletion.choices[0].message.content;
 }
 
+export async function generateStream({
+  componentName,
+  prompt = "",
+}: {
+  componentName: string;
+  prompt: string;
+}) {
+  await ensureDirsExist();
+  const fileContent = await getDocContents(componentName);
+
+  const openai = new OpenAI();
+  const chatCompletion = await openai.chat.completions.create({
+    stream: true,
+    messages: [
+      { role: "system", content: systemPrompt },
+      {
+        role: "user",
+        content: docPrompt(componentName, fileContent),
+      },
+      {
+        role: "user",
+        content: generationPrompt(componentName, prompt),
+      },
+    ],
+    model: "gpt-4o",
+  });
+
+  for await (const message of chatCompletion) {
+    if (message.choices[0].delta.content) {
+      process.stdout.write(message.choices[0].delta.content);
+    }
+  }
+}
+
 export async function list() {
   const dirs = await loadDocs();
   console.log(Object.keys(dirs).join("\n"));

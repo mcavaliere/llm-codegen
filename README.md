@@ -35,3 +35,5 @@ pnpm start gen form "a form for capturing patient medical information"
 - [ ] Add custom folder support
 - [ ] Support config via env vars and CLI options
 - [ ] Export binary as package
+- [ ] Show spinner
+- [x] Stream output
