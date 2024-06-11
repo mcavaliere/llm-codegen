@@ -32,13 +32,14 @@ program
         componentName,
         prompt,
       });
-    }
-    // const output = await generate({
-    //   componentName,
-    //   prompt,
-    // });
+    } else {
+      const output = await generate({
+        componentName,
+        prompt,
+      });
 
-    // console.log(output);
+      console.log(output);
+    }
   });
 
 program.parse(process.argv);

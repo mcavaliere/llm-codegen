@@ -1,4 +1,8 @@
 {
+  "name": "llm-codegen",
+  "version": "0.0.1",
+  "description": "A node CLI tool for generating up-to-date code with AI.",
+  "main": "src/main.ts",
   "scripts": {
     "start": "tsx src/main.ts"
   },
