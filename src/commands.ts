@@ -1,6 +1,7 @@
 import fs from "fs";
 import OpenAI from "openai";
 import { ensureDirsExist, getDocContents, loadDocs } from "./lib/filesystem";
+import { stripMarkdown } from "./lib/stripMarkdown";
 
 export const systemPrompt = `
 You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React.
@@ -78,7 +79,7 @@ export async function generateStream({
 
   for await (const message of chatCompletion) {
     if (message.choices[0].delta.content) {
-      process.stdout.write(message.choices[0].delta.content);
+      process.stdout.write(stripMarkdown(message.choices[0].delta.content));
     }
   }
 }
