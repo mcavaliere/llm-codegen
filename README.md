@@ -1,6 +1,6 @@
 ## [WIP] - a CLI tool for generating code with LLMs that is based on up-to-date documentation.
 
-🚨This repo is very much a draft. Nothing may work as expected. 🙃
+🚨This repo is under development. Expect the unexpected. 🙃
 
 ### Problem:
 
