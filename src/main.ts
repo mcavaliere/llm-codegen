@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import "dotenv/config";
-import { generate } from "./commands";
+import { generate, list } from "./commands";
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY not found");
@@ -12,6 +12,13 @@ program
   .name("llm-codegen")
   .description("LLM-assisted code generation for your favorite libraries")
   .version("0.0.1");
+
+program
+  .command("list")
+  .description("List all the documents available for code generation.")
+  .action(async () => {
+    await list();
+  });
 
 program
   .command("gen")
