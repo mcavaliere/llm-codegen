@@ -1,14 +1,24 @@
 {
   "name": "llm-codegen",
   "version": "0.0.1",
-  "description": "A node CLI tool for generating up-to-date code with AI.",
-  "main": "src/main.ts",
+  "description": "A CLI tool using LLMs + code library docs to generate higher-quality code.",
+  "main": "./dist/main.ts",
   "type": "module",
-  "scripts": {
-    "start": "tsx src/main.ts"
+  "bin": {
+    "lg": "./dist/main.js"
   },
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "build": "npx tsc",
+    "bundle": "tsup",
+    "upload": "pnpm bundle && npm publish"
+  },
+  "keywords": [],
+  "author": "Mike Cavaliere",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "tsup": "^8.1.0",
     "tsx": "^4.5.0",
     "typescript": "^5.3.2"
   },

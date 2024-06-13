@@ -2,6 +2,8 @@
 
 🚨This repo is under development. Expect the unexpected. 🙃
 
+🚨Until I publish the npm package, clone this repo to run it, and substitute `lg` for `pnpm start`🚨
+
 ### Problem:
 
 1. You ask an LLM (ChatGPT, Mistral, Anthropic, etc) to generate code using your favorite library.
@@ -71,6 +73,10 @@ lg gen shadcn/accordion "with headings for each US state, with content for that 
 ```
 
 ### Examples
+
+```bash
+pnpm start gen shadcn/form "for inputting a business address"
+```
 
 ```bash
 pnpm start gen shadcn/form "a form for capturing patient medical information"
