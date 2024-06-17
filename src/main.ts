@@ -1,9 +1,9 @@
-import { Command } from "commander";
 import "dotenv/config";
-import { generate, generateStream, list } from "./commands/commands";
-
-import ora from "ora";
+import { Command } from "commander";
+import { generate, generateStream, list } from "./commands/generate";
 import { stripMarkdown } from "./lib/stripMarkdown";
+import config from "../package.json";
+import ora from "ora";
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY not found");
@@ -14,7 +14,7 @@ const program = new Command();
 program
   .name("llm-codegen")
   .description("LLM-assisted code generation for your favorite libraries")
-  .version("0.0.1");
+  .version(config.version);
 
 program
   .command("list")

@@ -9,7 +9,6 @@
   },
   "scripts": {
     "start": "tsx src/main.ts",
-    "build": "npx tsc",
     "bundle": "tsup",
     "upload": "pnpm bundle && npm publish"
   },
