@@ -1,7 +1,6 @@
-import fs from "fs";
 import OpenAI from "openai";
-import { ensureDirsExist, getDocContents, loadDocs } from "./lib/filesystem";
-import { stripMarkdown } from "./lib/stripMarkdown";
+import { ensureDirsExist, getDocContents, loadDocs } from "../lib/filesystem";
+import { stripMarkdown } from "../lib/stripMarkdown";
 
 export const systemPrompt = `
 You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React.

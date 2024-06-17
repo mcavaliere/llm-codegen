@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import "dotenv/config";
-import { generate, generateStream, list } from "./commands";
+import { generate, generateStream, list } from "./commands/commands";
 
 import ora from "ora";
 import { stripMarkdown } from "./lib/stripMarkdown";
