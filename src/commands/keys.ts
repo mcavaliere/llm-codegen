@@ -7,6 +7,12 @@ export function list() {
     console.log("No API keys found. Run 'lg keys set' to add one.");
     return;
   }
+
+  const keyFilePath = expandDir(KEYS_FILE_PATH);
+
+  const keyConfig = JSON.parse(fs.readFileSync(keyFilePath, "utf8"));
+
+  console.log(keyConfig);
 }
 
 export async function set(modelName: string) {
@@ -23,7 +29,7 @@ export async function set(modelName: string) {
   const keyFilePath = expandDir(KEYS_FILE_PATH);
 
   try {
-    const contents = fs.readFileSync(keyFilePath, "utf8");
+    fs.readFileSync(keyFilePath, "utf8");
   } catch (e) {
     try {
       // Create the file if it doesn't exist

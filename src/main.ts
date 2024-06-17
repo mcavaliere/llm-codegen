@@ -6,20 +6,12 @@ import { stripMarkdown } from "./lib/stripMarkdown";
 import config from "../package.json";
 import ora from "ora";
 
-
 const program = new Command();
 
 program
   .name("lg")
   .description("LLM-assisted code generation for your favorite libraries")
   .version(config.version);
-
-program
-  .command("list")
-  .description("List all the documents available for code generation.")
-  .action(async () => {
-    await list();
-  });
 
 const keys = program.command("keys");
 
@@ -39,6 +31,13 @@ const keysSet = keys
   });
 
 const generate = program.command("gen");
+
+generate
+  .command("list")
+  .description("List all the documents available for code generation.")
+  .action(async () => {
+    await generateCommands.list();
+  });
 
 generate
   .description("Generate the code for a component")
