@@ -1,50 +1,60 @@
-import { Command } from "commander";
 import "dotenv/config";
-import { generate, generateStream, list } from "./commands";
-
-import ora from "ora";
-import { stripMarkdown } from "./lib/stripMarkdown";
-
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY not found");
-}
+import { Command } from "commander";
+import * as generateCommands from "./commands/generate";
+import * as keyCommands from "./commands/keys";
+import config from "../package.json";
 
 const program = new Command();
 
 program
-  .name("llm-codegen")
+  .name("lg")
   .description("LLM-assisted code generation for your favorite libraries")
-  .version("0.0.1");
+  .version(config.version);
 
-program
+const keys = program.command("keys");
+
+keys
+  .command("list")
+  .description("List all LLM API keys you've configured.")
+  .action(() => {
+    keyCommands.list();
+  });
+
+keys
+  .command("set")
+  .description("Save an API key for a langage model.")
+  .argument("<model>", "The model to save an API key for.")
+  .action(async (model) => {
+    keyCommands.set(model);
+  });
+
+const generate = program.command("gen");
+
+generate
   .command("list")
   .description("List all the documents available for code generation.")
   .action(async () => {
-    await list();
+    await generateCommands.list();
   });
 
-program
-  .command("gen")
+generate
   .description("Generate the code for a component")
   .option("-s, --stream", "Stream the output as it generates", false)
   .argument("<component>", "The name of the component")
   .argument("[prompt]", "Optional prompt to customize the generated code")
   .action(async (componentName, prompt, options) => {
-    if (options.stream === true) {
-      await generateStream({
-        componentName,
-        prompt,
-      });
-    } else {
-      const spinner = ora(`Generating a ${componentName}`).start();
-      const output = await generate({
-        componentName,
-        prompt,
-      });
+    await generateCommands.generate({
+      componentName,
+      prompt,
+      options,
+    });
+  });
 
-      spinner.stop();
-      if (output) console.log(stripMarkdown(output));
-    }
+generate
+  .command("list")
+  .description("List all generators currently available.")
+  .action(() => {
+    generateCommands.list();
   });
 
 program.parse(process.argv);

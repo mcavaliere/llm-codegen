@@ -1,5 +1,5 @@
 import { PathLike, readFileSync } from "fs";
-import { access, mkdir } from "fs/promises";
+import { access, mkdir, writeFile, open } from "fs/promises";
 import { DOCS_SEARCH_PATH } from "../constants";
 import path from "path";
 import os from "os";
@@ -17,14 +17,12 @@ export function contractDir(dir: string) {
   return dir.replace(os.homedir(), "~");
 }
 
-export async function createDirIfNotExists(dir: PathLike) {
-  return await access(dir)
-    .then(() => undefined)
-    .catch(() => mkdir(dir));
+export async function ensureDirExists(dir: PathLike) {
+  return await access(dir).catch(() => mkdir(dir));
 }
 
 export async function ensureDirsExist() {
-  await createDirIfNotExists(expandDir(DOCS_SEARCH_PATH));
+  await ensureDirExists(expandDir(DOCS_SEARCH_PATH));
 }
 
 /**
@@ -32,6 +30,7 @@ export async function ensureDirsExist() {
  */
 export async function loadDocs(): Promise<Record<string, string>> {
   const files = await fg.glob(`${expandDir(DOCS_SEARCH_PATH)}/**/*`);
+
   return files.reduce((acc, file) => {
     acc[docNameFromPath(file)] = file;
     return acc;
