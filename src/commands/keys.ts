@@ -2,6 +2,8 @@ import fs from "fs";
 import { DOCS_SEARCH_PATH, KEYS_FILE_PATH, SUPPORTED_MODELS } from "../constants";
 import { ensureDirExists, expandDir } from "../lib/filesystem";
 import { input } from "@inquirer/prompts";
+import { ensureSupportedModel } from "../lib/models";
+import { getConfig, saveConfigFile } from "../lib/keyConfig";
 export function list() {
   if (!fs.existsSync(KEYS_FILE_PATH)) {
     console.log("No API keys found. Run 'lg keys set' to add one.");
@@ -16,13 +18,7 @@ export function list() {
 }
 
 export async function set(modelName: string) {
-  if (!SUPPORTED_MODELS.includes(modelName.toLowerCase())) {
-    console.log(
-      `Model ${modelName} is not supported. Supported models are: ${SUPPORTED_MODELS.join(", ")}`
-    );
-    return;
-    2;
-  }
+  ensureSupportedModel(modelName);
 
   await ensureDirExists(DOCS_SEARCH_PATH);
 
@@ -42,14 +38,14 @@ export async function set(modelName: string) {
   }
 
   // Read existing config into object
-  const keyConfig = JSON.parse(fs.readFileSync(keyFilePath, "utf8"));
+  const keyConfig = getConfig();
 
   const key = await input({ message: `Enter your ${modelName} API key:` });
 
   keyConfig[modelName] = key;
 
   // Write the new config back to the file
-  fs.writeFileSync(keyFilePath, JSON.stringify(keyConfig, null, 2));
+  saveConfigFile(keyConfig);
 
   console.log(`Configured ${modelName} API key and saved updated config to ${KEYS_FILE_PATH}`);
 }

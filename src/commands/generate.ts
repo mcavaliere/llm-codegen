@@ -1,6 +1,11 @@
 import OpenAI from "openai";
 import { ensureDirsExist, getDocContents, loadDocs } from "../lib/filesystem";
 import { stripMarkdown } from "../lib/stripMarkdown";
+import { RequestOptions } from "openai/core";
+import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat/completions";
+import { Stream } from "openai/streaming";
+import ora from "ora";
+import { getKey } from "../lib/keyConfig";
 
 export const systemPrompt = `
 You're an expert full-stack software engineer with vast knowledge of TypeScript, JavaScript and React.
@@ -20,18 +25,25 @@ export function generationPrompt(componentName: string, prompt: string = "") {
   return `Generate the code for a ${componentName}. ${prompt} Output only the code and no other characters. `;
 }
 
-export async function generate({
+export async function generateBase({
   componentName,
-  prompt = "",
+  prompt,
+  options = {
+    stream: false,
+  },
 }: {
   componentName: string;
   prompt: string;
+  options: RequestOptions;
 }) {
-  await ensureDirsExist();
   const fileContent = await getDocContents(componentName);
 
-  const openai = new OpenAI();
-  const chatCompletion = await openai.chat.completions.create({
+  const openai = new OpenAI({
+    apiKey: getKey("openai"),
+  });
+
+  return openai.chat.completions.create({
+    ...options,
     messages: [
       { role: "system", content: systemPrompt },
       {
@@ -45,8 +57,30 @@ export async function generate({
     ],
     model: "gpt-4o",
   });
+}
 
-  return chatCompletion.choices[0].message.content;
+export async function generateSync({
+  componentName,
+  prompt = "",
+}: {
+  componentName: string;
+  prompt: string;
+}) {
+  await ensureDirsExist();
+
+  const spinner = ora(`Generating a ${componentName}`).start();
+  const chatCompletion = (await generateBase({
+    componentName,
+    prompt,
+    options: { stream: false },
+  })) as ChatCompletion;
+  spinner.stop();
+
+  const output = chatCompletion.choices[0].message.content;
+
+  if (output) {
+    console.log(stripMarkdown(output));
+  }
 }
 
 export async function generateStream({
@@ -57,29 +91,33 @@ export async function generateStream({
   prompt: string;
 }) {
   await ensureDirsExist();
-  const fileContent = await getDocContents(componentName);
 
-  const openai = new OpenAI();
-  const chatCompletion = await openai.chat.completions.create({
-    stream: true,
-    messages: [
-      { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: docPrompt(componentName, fileContent),
-      },
-      {
-        role: "user",
-        content: generationPrompt(componentName, prompt),
-      },
-    ],
-    model: "gpt-4o",
-  });
+  const chatCompletion = (await generateBase({
+    componentName,
+    prompt,
+    options: { stream: true },
+  })) as Stream<ChatCompletionChunk>;
 
   for await (const message of chatCompletion) {
     if (message.choices[0].delta.content) {
       process.stdout.write(stripMarkdown(message.choices[0].delta.content));
     }
+  }
+}
+
+export async function generate({
+  componentName,
+  prompt = "",
+  options: { stream = false } = { stream: false },
+}: {
+  componentName: string;
+  prompt: string;
+  options: { stream: boolean };
+}) {
+  if (stream) {
+    await generateStream({ componentName, prompt });
+  } else {
+    await generateSync({ componentName, prompt });
   }
 }
 

@@ -4,7 +4,6 @@ import { DOCS_SEARCH_PATH } from "../constants";
 import path from "path";
 import os from "os";
 import fg from "fast-glob";
-import fs from "fs";
 
 export function expandDir(dir: string) {
   if (dir.startsWith("~")) {
